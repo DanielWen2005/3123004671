@@ -1,4 +1,12 @@
 import sys
+import re
+
+def preprocess_text(text):
+    # 移除非中文、英文和数字的字符
+    text = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9]', ' ', text)
+    # 将多个空格替换为单个空格
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
 def read_file(file_path):
     # 文件读取
@@ -11,6 +19,15 @@ def read_file(file_path):
         sys.exit(1)
     except Exception as e:
         print(f"读取文件时出错：{e}")
+        sys.exit(1)
+
+def write_result(output_path, similarity):
+    try:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(f"{similarity:.2f}")
+        print("结果已写入")
+    except Exception as e:
+        print(f"写入文件时出错：{e}")
         sys.exit(1)
 
 if __name__ == "__main__":
