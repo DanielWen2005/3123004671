@@ -34,7 +34,14 @@ def write_result(output_path, answer):
 def levenshtein(original_text, copied_text):
     ori_word = preprocess_text(original_text)
     cp_word = preprocess_text(copied_text)
-
+    # 如果文本过长，采样计算
+    max_length = 10000
+    if len(ori_word) > max_length or len(cp_word) > max_length:
+        sample_size = min(max_length, len(ori_word), len(cp_word))
+        ori_sample = ori_word[:sample_size] if len(ori_word) > sample_size else ori_word
+        cp_sample = cp_word[:sample_size] if len(cp_word) > sample_size else cp_word
+        return levenshtein_ratio(ori_sample, cp_sample)
+    
     return levenshtein_ratio(ori_word, cp_word)
 
 if __name__ == "__main__":
