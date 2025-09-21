@@ -1,8 +1,9 @@
 import sys
 import re
+from Levenshtein import ratio as levenshtein_ratio
 
 def preprocess_text(text):
-    # 移除非中文、英文和数字的字符
+    # 只保留中文、英文和数字
     text = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9]', ' ', text)
     # 将多个空格替换为单个空格
     text = re.sub(r'\s+', ' ', text)
@@ -21,14 +22,20 @@ def read_file(file_path):
         print(f"读取文件时出错：{e}")
         sys.exit(1)
 
-def write_result(output_path, similarity):
+def write_result(output_path, answer):
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(f"{similarity:.2f}")
+            f.write(f"{answer:.2f}")
         print("结果已写入")
     except Exception as e:
         print(f"写入文件时出错：{e}")
         sys.exit(1)
+
+def levenshtein(original_text, copied_text):
+    ori_word = preprocess_text(original_text)
+    cp_word = preprocess_text(copied_text)
+
+    return levenshtein_ratio(ori_word, cp_word)
 
 if __name__ == "__main__":
 
@@ -42,4 +49,8 @@ if __name__ == "__main__":
 
     original_content = read_file(original_file)
     copied_content = read_file(copied_file)
+
+    answer = levenshtein(original_content, copied_content)
+
+    write_result(output_file, answer)
     
